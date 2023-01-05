@@ -31,19 +31,19 @@ class ChatGPTApi {
     String prompt, {
     int maxTokens = 2000,
     num temperature = 0,
-    num topP = 1,
-    num frequencyPenalty = 0.0,
-    num presencePenalty = 0.0,
-    int n = 1,
-    bool stream = false,
-    String stop = "\n",
+    num? topP,
+    num? frequencyPenalty,
+    num? presencePenalty,
+    int? n,
+    bool? stream,
+    String? stop,
     int? logProbs,
     bool? echo,
   }) async {
     String apiKey = this.apiKey;
     List<Param> data = [];
     data.add(Param('temperature', temperature));
-    data.add(Param('topP', topP));
+    data.add(Param('top_p', topP));
     data.add(Param('frequency_penalty', frequencyPenalty));
     data.add(Param('presence_penalty', presencePenalty));
     data.add(Param('n', n));
@@ -68,6 +68,7 @@ class ChatGPTApi {
       },
       body: jsonEncode(reqData),
     );
+    print(response.body);
     if (response.statusCode != 200) {
       if (response.statusCode == 429) {
         throw Exception('Rate limited');
@@ -77,7 +78,9 @@ class ChatGPTApi {
     } else if (_errorMessages.contains(response.body)) {
       throw Exception('OpenAI returned an error');
     }
-    Map<String, dynamic> newresponse = jsonDecode(response.body);
+    Map<String, dynamic> newresponse = jsonDecode(
+      utf8.decode(response.bodyBytes),
+    );
 
     if (newresponse['error'] != null) {
       throw Exception(newresponse['error']['message']);
