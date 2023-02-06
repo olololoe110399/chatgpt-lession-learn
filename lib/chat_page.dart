@@ -21,7 +21,6 @@ class _ChatPageState extends State<ChatPage> {
   final List<ChatMessage> _messages = [];
   late bool isLoading;
   late bool isListening;
-  late bool isVoiceAssistant;
   final ChatGPTApi openAI = ChatGPTApi(apiKey: AppConstants.apiSecretKey);
   final speechToText = stt.SpeechToText();
   final flutterTts = FlutterTts();
@@ -40,8 +39,11 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void init() async {
-    languages = List<String>.from(await flutterTts.getLanguages);
-    setState(() {});
+    final _languages = List<String>.from(await flutterTts.getLanguages);
+
+    setState(() {
+      languages = _languages;
+    });
   }
 
   @override
